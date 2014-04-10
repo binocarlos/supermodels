@@ -18,7 +18,7 @@ describe('supermodels', function(){
 
   })
 
-  describe('supermodel', function(){
+  describe('basic read/write', function(){
     it('should read a value', function(){
 
       var data = {
@@ -111,8 +111,9 @@ describe('supermodels', function(){
       supermodel().should.equal('apples');
       data.address.postcode.should.equal('apples');
     })
+  })
 
-
+  describe('array values', function(){
     it('should read/write an array value', function(){
 
       var data = [{
@@ -174,7 +175,9 @@ describe('supermodels', function(){
       
     })
 
+  })
 
+  describe('remove', function(){
     it('should return a remove function', function(){
 
       var obj = {
@@ -195,6 +198,108 @@ describe('supermodels', function(){
       obj.removeAddress('postcode');
 
       ('-' + obj.models[0].address.postcode).should.equal('-undefined');
+
+    })
+  })
+
+  describe('array value', function(){
+
+    function get_obj(){
+
+      var obj = {
+        models:[{
+          address:{
+            postcode:'SW12',
+            tags:['a', 'b', 'c']
+          }
+        },{
+          address:{
+            postcode:'BS2',
+            tags:['a']
+          }
+        }],
+        addTag:supermodels(function(){
+          return this.models;
+        }, 'address.tags', 'array:add'),
+        removeTag:supermodels(function(){
+          return this.models;
+        }, 'address.tags', 'array:remove'),
+        hasTag:supermodels(function(){
+          return this.models;
+        }, 'address.tags', 'array:has')
+      }
+
+      return obj;
+    }
+
+    it('should add an array value', function(){
+
+      var obj = get_obj();
+
+      obj.addTag('b');
+
+      obj.models[0].address.tags.length.should.equal(3);
+      obj.models[1].address.tags[1].should.equal('b');
+
+    })
+
+
+    it('should remove an array value', function(){
+
+      var obj = get_obj();
+
+      obj.removeTag('a');
+
+      obj.models[0].address.tags.length.should.equal(2);
+      obj.models[1].address.tags.length.should.equal(0);
+      obj.models[0].address.tags[0].should.equal('b');
+
+    })
+
+    it('should check if it has an array value', function(){
+
+      var obj = get_obj();
+
+      obj.hasTag('a').should.equal(true);
+      obj.hasTag('d').should.equal(false);
+
+    })
+  })
+
+  
+  describe('types', function(){
+
+
+    it('should do a has filter', function(){
+
+      var data = {
+        address:{
+          postcode:{
+            hello:20
+          }
+        }
+      };
+
+      var supermodelhas = supermodels(data, 'address.postcode', 'has');
+
+      supermodelhas().should.equal(true);
+      supermodelhas('hello').should.equal(true);
+      supermodelhas('dfdfdf').should.equal(false);
+    })
+
+    it('should do a is filter', function(){
+
+      var data = {
+        address:{
+          postcode:'SW12'
+        }
+      };
+
+      var supermodelis = supermodels(data, 'address.postcode', 'is');
+
+      supermodelis().should.equal(false);
+      supermodelis('DFDF').should.equal(false);
+      supermodelis('SW12').should.equal(true);
 
     })
   })

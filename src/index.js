@@ -18,7 +18,10 @@ function valuesetter(model, value, name){
 }
 
 function makepath(path, base){
-	var parts = [path];
+	var parts = [];
+	if(path){
+		parts.push(path);
+	}
 	if(base){
 		parts.unshift(base);
 	}
@@ -67,6 +70,72 @@ function wrapper(data, basepath, type){
 			})	
 			return self;
 		}	
+	}
+	else if(type=='array:add'){
+		return function(val){
+			var self = this;
+			var models = get_models(self, data) || [];
+			models.forEach(function(model){
+				var arr = dotty.get(model, basepath) || [];
+				var found = false;
+		    arr.forEach(function(a){
+		    	if(a==val){
+		    		found = true;
+		    	}
+		    })
+		    if(!found){
+		    	arr.push(val);	
+		    }
+				dotty.put(model, basepath, arr);
+			})
+		}
+	}
+	else if(type=='array:remove'){
+		return function(val){
+			var self = this;
+			var models = get_models(self, data) || [];
+			models.forEach(function(model){
+				var arr = (dotty.get(model, basepath) || []).filter(function(v){
+					return v!=val;
+				})
+				dotty.put(model, basepath, arr);
+			})
+		}
+	}
+	else if(type=='array:has'){
+		return function(val){
+			var self = this;
+			var model = get_model(self, data);
+			if(!model){
+				return false;
+			}
+			var arr = (dotty.get(model, basepath) || []).filter(function(v){
+				return v==val;
+			})
+			return arr.length>0;
+		}
+	}
+	else if(type=='has'){
+		return function(path){
+			var self = this;
+			var model = get_model(self, data);
+			if(!model){
+				return false;
+			}
+			var usepath = makepath(path, basepath);
+			return valuereader(model, usepath) ? true : false;
+		}
+	}
+	else if(type=='is'){
+		return function(val){
+			var self = this;
+			var model = get_model(self, data);
+			if(!model){
+				return false;
+			}
+			var v = valuereader(model, basepath);
+			return v==val;
+		}
 	}
 	else{
 		return function(path, val){
