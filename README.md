@@ -1,7 +1,7 @@
 supermodels
 ===========
 
-[Build status](https://api.travis-ci.org/binocarlos/supermodels.png)
+![Build status](https://api.travis-ci.org/binocarlos/supermodels.png)
 
 dot notation get/set for an object or array of objects
 
