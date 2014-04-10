@@ -1,7 +1,7 @@
 supermodels
 ===========
 
-![Build status](https://api.travis-ci.org/supermodels/len.png)
+![Build status](https://api.travis-ci.org/supermodels/supermodels.png)
 
 dot notation get/set for an object or array of objects
 
@@ -119,12 +119,6 @@ console.log(arr);
 ```
 
 #### property access
-
-
-
-
-
-
 
 mymodel.js:
 
@@ -247,70 +241,21 @@ console.log(instance.modelarray);
 
 ## api
 
-#### `supermodels.object(arrayname, path);`
+#### `supermodels(data, [path], [isproperty]);`
 
-Return an accessor function that will modify each model in the array.
+Return an accessor function that will modify data.
 
-You assign the accessor function to the prototype
+Data can be a an object, an array or a function.
 
-arrayname is the name of the model array in the prototype instance
+Path is a dot notation for the property in the data to modify.
 
-path is a string that uses dot notation to point to an object in each model
+isproperty means a single value getter/setter will be returned.
 
-In write mode - all objects in the array are updated.
+If data is an object - it will be converted to an array with one element.
 
-In read mode - the first value is returned.
+If data is an array - it will be used directly.
 
-```js
-var supermodels = require('supermodels');
-
-var obj = {
-	models:getArrayOfModels(),
-	settings:supermodels.object('models', 'settings')
-}
-
-obj.settings('name', 'hello');
-
-obj.models.forEach(function(model){
-	console.log(model.settings.name);
-
-	// hello
-})
-```
-
-#### `supermodels.property(arrayname, propertyname);`
-
-Return an accessor function that will modify the 'arrayname' array of this.
-
-objectname is the name of the object that is accessed.
-
-In write mode - all objects in the array are updated.
-
-In read mode - the first value is returned.
-
-```js
-var supermodels = require('supermodels');
-
-var obj = {
-	models:getArrayOfModels(),
-	settings:supermodels.object('models', 'settings')
-}
-
-obj.settings('name', 'hello');
-
-obj.models.forEach(function(model){
-	console.log(model.settings.name);
-
-	// hello
-})
-```
-
-
-
-
-
-
-
+If data is a function - it will be called each time to provide the data.
 
 ## license
 
