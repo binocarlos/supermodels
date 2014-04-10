@@ -1,5 +1,7 @@
 var dotty = require('dotty');
 
+module.exports = wrapper;
+
 function valuereader(model, name){
   if(!name){
   	return model;
@@ -31,8 +33,8 @@ function get_data(context, data){
 }
 
 function get_model(context, data){
-	data = get_data(data);
-	if(data[0]){
+	data = get_data(context, data);
+	if(data && data[0]){
 		return data[0];
 	}
 	else{
@@ -41,12 +43,12 @@ function get_model(context, data){
 }
 
 function get_models(context, data){
-	data = get_data(data);
-	if(data[0]){
+	data = get_data(context, data);
+	if(data && data[0]){
 		return data;
 	}
 	else{
-		[data];
+		return [data];
 	}
 }
 
@@ -66,7 +68,7 @@ function wrapper(data, basepath, isproperty){
       }
 			return valuereader(model, basepath);
 		}
-		else if(arguments.length===1){
+		else if(arguments.length==1){
 			if(isproperty){
 				models.forEach(function(model){
 					valuesetter(model, path, basepath);

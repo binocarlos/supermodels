@@ -81,7 +81,9 @@ describe('supermodels', function(){
 
       var data = {
         address:{
-          postcode:'SW12'
+          postcode:{
+            hello:20
+          }
         }
       };
 
