@@ -1,7 +1,7 @@
 supermodels
 ===========
 
-![Build status](https://api.travis-ci.org/supermodels/supermodels.png)
+[Build status](https://api.travis-ci.org/binocarlos/supermodels.png)
 
 dot notation get/set for an object or array of objects
 
@@ -118,7 +118,7 @@ console.log(arr);
 */
 ```
 
-#### property access
+#### class property access
 
 mymodel.js:
 
@@ -132,24 +132,26 @@ function MyClass(arr){
   this.modelarray = arr;
 }
 
+function getmodels(){
+	return this.modelarray;
+}
+
 // create a function that updates objects living in modelarray
-MyClass.prototype.attr = supermodels.object('modelarray');
+MyClass.prototype.attr = supermodels(getmodels);
 
 // create a function that updates nested objects living in modelarray
-MyClass.prototype.address = supermodels.object('modelarray', 'address');
+MyClass.prototype.address = supermodels(getmodels, 'address');
 
 // create a function that updates nested properties living in modelarray
-MyClass.prototype.postcode = supermodels.property('modelarray', 'address.postcode');
+MyClass.prototype.postcode = supermodels(getmodels, 'address.postcode', true);
 ```
-
-#### instance
 
 Then create a new instance:
 
 ```js
 var Model = require('./mymodel.js');
 
-var instance = new Model([{
+var data = [{
 	name:'HQ',
 	address:{
 		city:'London',
@@ -161,10 +163,10 @@ var instance = new Model([{
 		city:'Bristol,
 		postcode:'BS1'
 	}
-}])
-```
+}]
 
-#### access functions
+var instance = new Model(data)
+```
 
 Our instance can update all models in the list at once:
 
@@ -173,34 +175,27 @@ instance.attr('test', 10);
 
 console.log(instance.modelarray);
 
+data.forEach(function(model){
+	console.log(model.test);
+})
+
 /*
-[{
-	name:'HQ',
-	test:10,
-	address:{
-		city:'London',
-		postcode:'SW12'
-	}
-},{
-	name:'Accounts',
-	test:10,
-	address:{
-		city:'Bristol,
-		postcode:'BS1'
-	}
-}]
+
+// 10
+// 10
+
 */
 ```
 
 It will return the value of the first model on reading:
 
 ```js
-console.log(instance.attr('test'));
+console.log(instance.attr('address.city'));
 
-// 10
+// London
 ```
 
-#### nested attributed
+#### nested attributes
 
 Access functions allow nested attributes:
 
@@ -208,22 +203,10 @@ Access functions allow nested attributes:
 instance.address('top.middle.bottom', 12);
 
 
-console.log(instance.modelarray);
+console.log(data[1]);
 
 /*
-[{
-	name:'HQ',
-	test:10,
-	address:{
-		city:'London',
-		postcode:'SW12',
-		top:{
-			middle:{
-				bottom:12
-			}
-		}
-	}
-},{
+{
 	name:'Accounts',
 	test:10,
 	address:{
@@ -235,13 +218,13 @@ console.log(instance.modelarray);
 			}
 		}
 	}
-}]
+}
 */
 ```
 
 ## api
 
-#### `supermodels(data, [path], [isproperty]);`
+#### `supermodels(data, [path], [type]);`
 
 Return an accessor function that will modify data.
 
@@ -249,13 +232,59 @@ Data can be a an object, an array or a function.
 
 Path is a dot notation for the property in the data to modify.
 
-isproperty means a single value getter/setter will be returned.
-
 If data is an object - it will be converted to an array with one element.
 
 If data is an array - it will be used directly.
 
 If data is a function - it will be called each time to provide the data.
+
+type can be one of:
+
+ * true - which means 'primitive'
+ * primitive - which means read and write one value - supermodel(value)
+ * object - which means read and write objectvalues - supermodel(name, value)
+ * remove - which means the function is a property deleter
+
+A primitive:
+
+```js
+var data = {
+	title:'Test'
+}
+var prop = supermodels(data, 'title', true);
+
+console.log(prop());
+
+// Test
+
+prop('apples');
+
+console.log(prop());
+
+// apples
+
+```
+
+A removal function:
+
+var data = {
+	address:{
+		postcode:'SW12'
+	}
+}
+
+var remover = supermodels(data, 'address', 'remove');
+
+remover();
+
+console.log(data);
+
+/*
+ {
+
+ }
+*/
+
 
 ## license
 
