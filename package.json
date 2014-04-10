@@ -1,6 +1,6 @@
 {
   "name": "supermodels",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Create access functions for an object that has an array of models as a property",
   "main": "src/index.js",
   "scripts": {
