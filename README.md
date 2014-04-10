@@ -241,9 +241,14 @@ If data is a function - it will be called each time to provide the data.
 type can be one of:
 
  * true - which means 'primitive'
- * primitive - which means read and write one value - supermodel(value)
- * object - which means read and write objectvalues - supermodel(name, value)
- * remove - which means the function is a property deleter
+ * primitive - return a function that will read and write one value - supermodel(value)
+ * object - return a function that will read and write objectvalues - supermodel(name, value)
+ * remove - return a function that will delete an object property - supermodel()
+ * array:add - return a function that inserts a primitive into an array (if it does not exist) - supermodel(value)
+ * array:remove - return a function that removes a primitive from an array - supermodel(value)
+ * array:has - return a function that tells you if a value is in the array - supermodel(value)
+ * has - return a function that tells you if the model has the property - supermodel(path)
+ * is - return a function that tells you if the models property is a value - supermodel(value)
 
 A primitive:
 
