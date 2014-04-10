@@ -52,50 +52,64 @@ function get_models(context, data){
 	}
 }
 
-function wrapper(data, basepath, isproperty){
-	if(typeof(basepath)==='boolean'){
-		isproperty = basepath;
-		basepath = '';
-	}
-	return function(path, val){
-		var self = this;
-		var model = get_model(self, data);
-		var models = get_models(self, data) || [];
 
-		if(arguments.length<=0){
-      if(!model){
-      	return null;
-      }
-			return valuereader(model, basepath);
-		}
-		else if(arguments.length==1){
-			if(isproperty){
-				models.forEach(function(model){
-					valuesetter(model, path, basepath);
-				})
-				return self;
+function wrapper(data, basepath, type){
+	if(typeof(type)==='boolean'){
+		type = 'primitive';
+	}
+	if(type=='remove'){
+		return function(path){
+			var self = this;
+			var usepath = makepath(path, basepath);
+			var models = get_models(self, data) || [];
+			models.forEach(function(model){
+				dotty.remove(model, usepath);
+			})	
+			return self;
+		}	
+	}
+	else{
+		return function(path, val){
+			var self = this;
+			var model = get_model(self, data);
+			var models = get_models(self, data) || [];
+
+			if(arguments.length<=0){
+	      if(!model){
+	      	return null;
+	      }
+				return valuereader(model, basepath);
 			}
-			else{
-				if(typeof(path)==='string'){
-					if(!model){
-						return null;
-					}
-					return valuereader(model, makepath(path, basepath));
-				}
-				else{
+			else if(arguments.length==1){
+				if(type=='primitive'){
 					models.forEach(function(model){
 						valuesetter(model, path, basepath);
 					})
 					return self;
 				}
+				else{
+					if(typeof(path)==='string'){
+						if(!model){
+							return null;
+						}
+						return valuereader(model, makepath(path, basepath));
+					}
+					else{
+						models.forEach(function(model){
+							valuesetter(model, path, basepath);
+						})
+						return self;
+					}
+				}
+			}
+			else if(arguments.length>1){
+				var usepath = makepath(path, basepath);
+				models.forEach(function(model){
+					valuesetter(model, val, usepath);
+				})
+				return self;	
 			}
 		}
-		else if(arguments.length>1){
-			var usepath = makepath(path, basepath);
-			models.forEach(function(model){
-				valuesetter(model, val, usepath);
-			})
-			return self;	
-		}
 	}
+	
 }

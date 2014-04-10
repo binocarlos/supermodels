@@ -102,7 +102,7 @@ describe('supermodels', function(){
         }
       };
 
-      var supermodel = supermodels(data, 'address.postcode', true);
+      var supermodel = supermodels(data, 'address.postcode', 'primitive');
 
       supermodel().should.equal('SW12');
 
@@ -125,7 +125,7 @@ describe('supermodels', function(){
         }
       }];
 
-      var supermodel = supermodels(data, 'address.postcode', true);
+      var supermodel = supermodels(data, 'address.postcode', 'primitive');
 
       supermodel().should.equal('SW12');
 
@@ -172,6 +172,30 @@ describe('supermodels', function(){
       obj.models[1].address.postcode.should.equal('apples');
       obj.models[1].address.test.should.equal(10);
       
+    })
+
+
+    it('should return a remove function', function(){
+
+      var obj = {
+        models:[{
+          address:{
+            postcode:'SW12'
+          }
+        },{
+          address:{
+            postcode:'BS2'
+          }
+        }],
+        removeAddress:supermodels(function(){
+          return this.models;
+        }, 'address', 'remove')
+      }
+
+      obj.removeAddress('postcode');
+
+      ('-' + obj.models[0].address.postcode).should.equal('-undefined');
+
     })
   })
 
