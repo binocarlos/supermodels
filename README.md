@@ -160,7 +160,7 @@ var data = [{
 },{
 	name:'Accounts',
 	address:{
-		city:'Bristol,
+		city:'Bristol',
 		postcode:'BS1'
 	}
 }]
@@ -272,6 +272,7 @@ console.log(prop());
 
 A removal function:
 
+```js
 var data = {
 	address:{
 		postcode:'SW12'
@@ -289,6 +290,7 @@ console.log(data);
 
  }
 */
+```
 
 
 ## license
