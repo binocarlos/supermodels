@@ -88,6 +88,7 @@ function wrapper(data, basepath, type){
 		    }
 				dotty.put(model, basepath, arr);
 			})
+			return self;
 		}
 	}
 	else if(type=='array:remove'){
@@ -100,6 +101,7 @@ function wrapper(data, basepath, type){
 				})
 				dotty.put(model, basepath, arr);
 			})
+			return self;
 		}
 	}
 	else if(type=='array:has'){

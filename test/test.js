@@ -244,6 +244,18 @@ describe('supermodels', function(){
     })
 
 
+    it('should return the object from array methods', function(){
+
+      var obj = get_obj();
+
+      obj.addTag('b').should.equal(obj);
+      obj.removeTag('b').should.equal(obj);
+
+
+    })
+
+
+
     it('should remove an array value', function(){
 
       var obj = get_obj();
